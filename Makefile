@@ -13,8 +13,8 @@ deps:
 
 # 開発に必要な依存をインストールする
 ## Setup
-.PHONY: setup
-setup: deps
+.PHONY: devel-deps
+devel-deps: deps
 	GO111MODULE=off go get \
     golang.org/x/lint/golint \
     github.com/motemen/gobump/cmd/gobump \
@@ -28,7 +28,7 @@ test: deps
 
 ## Lint
 .PHONY: lint
-lint: setup
+lint: devel-deps
 	go vet ./...
 	golint -set_exit_status ./...
 
