@@ -1,9 +1,16 @@
 package main
 
 import (
-"github.com/obr-note/myproj"
-) 
+	"bufio"
+	"fmt"
+	"os"
+	"strings"
+)
 
 func main() {
-  myproj.Run()
+  b := bufio.NewWriter(os.Stdout)
+  for i := 0; i < 100; i++ {
+    fmt.Fprintln(b, strings.Repeat("x", 100))
+  }
+  b.Flush()
 }
