@@ -1,16 +1,26 @@
 package main
 
 import (
-	"bufio"
+	"crypto/sha256"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"os"
-	"strings"
 )
 
 func main() {
-  b := bufio.NewWriter(os.Stdout)
-  for i := 0; i < 100; i++ {
-    fmt.Fprintln(b, strings.Repeat("x", 100))
-  }
-  b.Flush()
+  tmp, _ := ioutil.TempFile(os.TempDir(), "tmp")
+  defer tmp.Close()
+
+  hash := sha256.New()
+
+  w := io.MultiWriter(tmp, hash)
+
+  written, _ := io.Copy(w, os.Stdin)
+
+  fmt.Printf("Wrote %d bytes to %s\nSHA256: %x\n",
+    written,
+    tmp.Name(),
+    hash.Sum(nil),
+  )
 }
