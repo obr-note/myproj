@@ -1,26 +1,23 @@
 package main
 
 import (
-	"crypto/sha256"
-	"fmt"
-	"io"
-	"io/ioutil"
+	"database/sql"
+	"log"
 	"os"
+
+	_ "github.com/lib/pq"
 )
 
 func main() {
-  tmp, _ := ioutil.TempFile(os.TempDir(), "tmp")
-  defer tmp.Close()
+	dsn := os.Getenv("DSN")
+	db, err := sql.Open("postgres", dsn)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
 
-  hash := sha256.New()
-
-  w := io.MultiWriter(tmp, hash)
-
-  written, _ := io.Copy(w, os.Stdin)
-
-  fmt.Printf("Wrote %d bytes to %s\nSHA256: %x\n",
-    written,
-    tmp.Name(),
-    hash.Sum(nil),
-  )
+	err = db.Ping()
+	if err != nil {
+		log.Fatal(err)
+	}
 }
