@@ -17,18 +17,12 @@ func main() {
 	}
 	defer db.Close()
 
-	rows, err := db.Query(`SELECT id, name, age FROM users ORDER BY name`)
+	row := db.QueryRow(`SELECT name, age FROM users WHERE id=$1`, 1)
+	var name string
+	var age int64
+	err = row.Scan(&name, &age)
 	if err != nil {
 		log.Fatal(err)
 	}
-	for rows.Next() {
-		var id int64
-		var name string
-		var age int64
-		err = rows.Scan(&id, &name, &age)
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Println(id, name, age)
-	}
+	fmt.Println(name, age)
 }
