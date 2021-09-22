@@ -17,14 +17,18 @@ func main() {
 	}
 	defer db.Close()
 
-	result, err := db.Exec(`INSERT INTO users(name, age) VALUES($1, $2)`, "Bob", 18)
+	rows, err := db.Query(`SELECT id, name, age FROM users ORDER BY name`)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	affected, err := result.RowsAffected()
-	if err != nil {
-		log.Fatal(err)
+	for rows.Next() {
+		var id int64
+		var name string
+		var age int64
+		err = rows.Scan(&id, &name, &age)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(id, name, age)
 	}
-	fmt.Println(affected)
 }
