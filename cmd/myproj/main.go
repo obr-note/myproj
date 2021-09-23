@@ -27,4 +27,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	err = dbmap.Insert(&Comment{Text: "こんにちわ"})
+	if err != nil {
+		log.Fatal(err)
+	}
 }
