@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/go-gorp/gorp"
+	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo"
 
 	_ "github.com/lib/pq"
@@ -42,6 +43,7 @@ func main() {
 	}
 
 	e := echo.New()
+	e.Validator = &Validator{validator: validator.New()}
 
 	e.Static("/", "static")
 
@@ -64,6 +66,10 @@ func main() {
 			c.Logger().Error("Bind: ", err)
 			return c.String(http.StatusBadRequest, "Bind: "+err.Error())
 		}
+		if err := c.Validate(&comment); err != nil {
+			c.Logger().Error("Validate: ", err)
+			return c.String(http.StatusBadRequest, "Validate: "+err.Error())
+		}
 		if err = dbmap.Insert(&comment); err != nil {
 			c.Logger().Error("Insert: ", err)
 			return c.String(http.StatusBadRequest, "Insert: "+err.Error())
@@ -73,4 +79,12 @@ func main() {
 	})
 
 	e.Logger.Fatal(e.Start(":8080"))
+}
+
+type Validator struct {
+	validator *validator.Validate
+}
+
+func (v *Validator) Validate(i interface{}) error {
+	return v.validator.Struct(i)
 }
