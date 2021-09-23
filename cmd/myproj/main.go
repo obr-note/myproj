@@ -11,5 +11,6 @@ func main() {
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello")
 	})
+	e.Static("/", "static/")
 	e.Logger.Fatal(e.Start(":8080"))
 }
