@@ -18,6 +18,17 @@ type Comment struct {
 	Updated time.Time `db:"updated,notnull"`
 }
 
+func (c *Comment) PreInsert(s gorp.SqlExecutor) error {
+	c.Created = time.Now()
+	c.Updated = c.Created
+	return nil
+}
+
+func (c *Comment) PreUpdate(s gorp.SqlExecutor) error {
+	c.Updated = time.Now()
+	return nil
+}
+
 func main() {
 	dsn := os.Getenv("DSN")
 	db, _ := sql.Open("postgres", dsn)
