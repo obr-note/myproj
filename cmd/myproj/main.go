@@ -14,11 +14,11 @@ import (
 )
 
 type Comment struct {
-	Id      int64     `db:"id,primarykey,autoincrement"`
-	Name    string    `db:"name,notnull,default:'名無し',size:200"`
-	Text    string    `db:"text,notnull,size:400"`
-	Created time.Time `db:"created,notnull"`
-	Updated time.Time `db:"updated,notnull"`
+	Id      int64     `json:"id" db:"id,primarykey,autoincrement"`
+	Name    string    `json:"name" db:"name,notnull,default:'名無し',size:200"`
+	Text    string    `json:"text" db:"text,notnull,size:400"`
+	Created time.Time `json:"created" db:"created,notnull"`
+	Updated time.Time `json:"updated" db:"updated,notnull"`
 }
 
 func main() {
