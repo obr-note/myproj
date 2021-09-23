@@ -42,6 +42,9 @@ func main() {
 	}
 
 	e := echo.New()
+
+	e.Static("/", "static")
+
 	e.GET("/api/comments", func(c echo.Context) error {
 		var comments []Comment
 		_, err := dbmap.Select(
@@ -54,6 +57,20 @@ func main() {
 		}
 		return c.JSON(http.StatusOK, comments)
 	})
-	// e.Static("/", "static")
+
+	e.POST("/api/comments", func(c echo.Context) error {
+		var comment Comment
+		if err := c.Bind(&comment); err != nil {
+			c.Logger().Error("Bind: ", err)
+			return c.String(http.StatusBadRequest, "Bind: "+err.Error())
+		}
+		if err = dbmap.Insert(&comment); err != nil {
+			c.Logger().Error("Insert: ", err)
+			return c.String(http.StatusBadRequest, "Insert: "+err.Error())
+		}
+		c.Logger().Infof("ADDED: %v", comment.Id)
+		return c.JSON(http.StatusCreated, "")
+	})
+
 	e.Logger.Fatal(e.Start(":8080"))
 }
